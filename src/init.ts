@@ -9,5 +9,5 @@ export interface IInitOptions {
 export async function init(options?: IInitOptions) {
     const path = options?.tokenFilePath ?? join(homedir(), ".playwright/oauth_token");
     const token = await readToken(path);
-    process.env.SELENIUM_REMOTE_HEADERS = `{'Authorization':'OAuth ${token}'}`;
+    process.env.SELENIUM_REMOTE_HEADERS = `{"Authorization":"OAuth ${token}"}`;
 }
