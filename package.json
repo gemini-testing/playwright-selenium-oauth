@@ -1,6 +1,6 @@
 {
     "name": "playwright-oauth",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Plugin for convenient setting of authorization header with OAuth token for PlayWright",
     "main": "build/index.js",
     "files": [
