@@ -6,7 +6,6 @@ module.exports = {
         },
     },
     preset: "ts-jest",
-    setupFilesAfterEnv: ["jest-extended"],
     testMatch: [
         "**/src/**/*.test.ts",
     ],

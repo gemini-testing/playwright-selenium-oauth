@@ -5,15 +5,15 @@
 2. Add the OAuth token: `mkdir -p ~/.playwright && echo <mytoken> > ~/.playwright/oauth_token`
 3. [Add global setup to your playwright configuration](https://playwright.dev/docs/test-global-setup-teardown#configure-globalsetup-and-globalteardown), e.g.
 ```
-import {init} from "playwright-oauth"
-async function globalSetup(config: FullConfig) {
-  await init();
+import {setup} from "playwright-oauth"
+async function globalSetup() {
+  await setup();
 }
 export default globalSetup;
 ```
 
 ## Configuration
-You can pass a custom path to init, e.g.
+You can pass a custom path to setup, e.g.
 ```
-await init({tokenFilePath: "./my-token-file"})
+await setup({tokenFilePath: "./my-token-file"})
 ```
