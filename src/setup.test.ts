@@ -21,6 +21,14 @@ describe("setup", () => {
         expect(process.env.SELENIUM_REMOTE_HEADERS).toBe(`{"Authorization":"OAuth mytesttoken123"}`);
     });
 
+    it("should throw and display help when file does not exist", async () => {
+        await expect(
+            setup({ tokenFilePath: "/i/do/not/exist", help: "i don't need your help" }),
+        ).rejects.toThrowErrorMatchingInlineSnapshot(
+            `"playwright-selenium-oauth: error reading token from file, path: /i/do/not/exist. Error: ENOENT: no such file or directory, open '/i/do/not/exist'. i don't need your help"`,
+        );
+    });
+
     it("should load token from environment", async () => {
         process.env.PLAYWRIGHT_SELENIUM_OAUTH_TOKEN = "myenvtoken";
         await setup();

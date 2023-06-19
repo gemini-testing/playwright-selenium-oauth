@@ -5,7 +5,7 @@ async function readFromFile(path: string, help?: string) {
         return await readFile(path, { encoding: "utf-8" });
     } catch (e) {
         console.error(e);
-        throw new Error(`playwright-selenium-oauth: error reading token from file, path: ${path}. ${e}. ${help}`);
+        throw new Error(`playwright-selenium-oauth: error reading token from file, path: ${path}. ${e}. ${help ?? ""}`);
     }
 }
 
