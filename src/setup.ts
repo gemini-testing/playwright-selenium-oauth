@@ -12,20 +12,23 @@ function parseHeadersEnvVariable() {
     try {
         return JSON.parse(process.env[headersEnvVariable] ?? "{}");
     } catch (e) {
-        console.error(`playwright-selenium-oauth: error parsing ${headersEnvVariable}`, e);
-        throw e;
+        console.error(e);
+        throw new Error(`playwright-selenium-oauth: error parsing ${headersEnvVariable}. ${e}`);
     }
 }
 
 function setToken(token: string) {
     const trimmedToken = token.trim();
+    if (!trimmedToken) {
+        throw new Error(`playwright-selenium-oauth: token is empty or only contains spaces`);
+    }
     const seleniumRemoteHeaders = parseHeadersEnvVariable();
     const existingAuthHeader = Object.keys(seleniumRemoteHeaders).find(key => key.toLowerCase() === "authorization");
     if (existingAuthHeader) {
         console.warn(`playwright-selenium-oauth: there is already an Authorization header, not doing anything.`);
         return;
     }
-    seleniumRemoteHeaders["Authorization"] = `"OAuth ${trimmedToken}"`;
+    seleniumRemoteHeaders["Authorization"] = `OAuth ${trimmedToken}`;
     process.env[headersEnvVariable] = JSON.stringify(seleniumRemoteHeaders);
 }
 

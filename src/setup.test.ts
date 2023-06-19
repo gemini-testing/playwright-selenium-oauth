@@ -1,11 +1,13 @@
 import { join } from "path";
 import { setup } from "./setup";
 
-jest.mock("console");
+global.console = <Console>(<unknown>{ warn: jest.fn(), error: jest.fn(), log: jest.fn() });
 
 describe("setup", () => {
     beforeEach(() => {
         delete process.env.SELENIUM_REMOTE_HEADERS;
+        (<jest.Mock>(<unknown>global.console.warn)).mockClear();
+        (<jest.Mock>(<unknown>global.console.error)).mockClear();
     });
 
     it("should load token from parameter", async () => {
@@ -19,13 +21,17 @@ describe("setup", () => {
     });
 
     it("should force to provide either token or tokenFilePath", async () => {
-        await expect(setup({})).toThrowErrorMatchingInlineSnapshot();
+        await expect(setup({})).rejects.toThrowErrorMatchingInlineSnapshot(
+            `"playwright-selenium-oauth: one of "token" or "tokenFilePath" must be provided"`,
+        );
     });
 
     it("should log warning if both token and tokenFilePath specified", async () => {
         await setup({ token: "mytoken", tokenFilePath: join(__dirname, "./test-fixtures/setup-testtoken") });
         expect(process.env.SELENIUM_REMOTE_HEADERS).toBe(`{"Authorization":"OAuth mytoken"}`);
-        expect(console.warn).toHaveBeenCalledWith("sad"); // TODO
+        expect(console.warn).toHaveBeenCalledWith(
+            'playwright-selenium-oauth: both "token" and "tokenFilePath" have been provided, using "token"',
+        );
     });
 
     it("should enrich existing SELENIUM_REMOTE_HEADERS env variable", async () => {
@@ -42,16 +48,22 @@ describe("setup", () => {
 
     it("should throw if existing SELENIUM_REMOTE_HEADERS is unparsable", async () => {
         process.env.SELENIUM_REMOTE_HEADERS = "cant parse me";
-        await expect(setup({ token: "mytoken" })).toThrowErrorMatchingInlineSnapshot();
+        await expect(setup({ token: "mytoken" })).rejects.toThrowErrorMatchingInlineSnapshot(
+            `"playwright-selenium-oauth: error parsing SELENIUM_REMOTE_HEADERS. SyntaxError: Unexpected token c in JSON at position 0"`,
+        );
     });
 
     it("should throw if token is empty", async () => {
-        await expect(setup({ token: "     " })).toThrowErrorMatchingInlineSnapshot();
+        await expect(setup({ token: "     " })).rejects.toThrowErrorMatchingInlineSnapshot(
+            `"playwright-selenium-oauth: token is empty or only contains spaces"`,
+        );
     });
 
     it("should throw if token is empty - from file", async () => {
         await expect(
             setup({ tokenFilePath: join(__dirname, "./test-fixtures/setup-testtoken-empty") }),
-        ).toThrowErrorMatchingInlineSnapshot();
+        ).rejects.toThrowErrorMatchingInlineSnapshot(
+            `"playwright-selenium-oauth: token is empty or only contains spaces"`,
+        );
     });
 });
