@@ -10,10 +10,6 @@ async function readFromFile(path: string, help?: string) {
 }
 
 export async function readToken(path: string, help?: string): Promise<string> {
-    const token = await readFromFile(path, help);
-    const trimmedToken = token.trim();
-    if (!trimmedToken) {
-        throw new Error(`playwright-selenium-oauth: token at ${path} is empty. ${help}`);
-    }
-    return trimmedToken;
+    console.log(`playwright-selenium-oauth: reading token at ${path}`);
+    return await readFromFile(path, help);
 }

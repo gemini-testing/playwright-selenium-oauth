@@ -18,13 +18,14 @@ function parseHeadersEnvVariable() {
 }
 
 function setToken(token: string) {
+    const trimmedToken = token.trim();
     const seleniumRemoteHeaders = parseHeadersEnvVariable();
     const existingAuthHeader = Object.keys(seleniumRemoteHeaders).find(key => key.toLowerCase() === "authorization");
     if (existingAuthHeader) {
         console.warn(`playwright-selenium-oauth: there is already an Authorization header, not doing anything.`);
         return;
     }
-    seleniumRemoteHeaders["Authorization"] = `"OAuth ${token}"`;
+    seleniumRemoteHeaders["Authorization"] = `"OAuth ${trimmedToken}"`;
     process.env[headersEnvVariable] = JSON.stringify(seleniumRemoteHeaders);
 }
 
