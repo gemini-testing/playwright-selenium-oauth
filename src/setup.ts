@@ -7,6 +7,7 @@ export interface SetupOptions {
 }
 
 const headersEnvVariable = "SELENIUM_REMOTE_HEADERS";
+const tokenEnvVarialbe = "PLAYWRIGHT_SELENIUM_OAUTH_TOKEN";
 
 function parseHeadersEnvVariable() {
     try {
@@ -32,19 +33,25 @@ function setToken(token: string) {
     process.env[headersEnvVariable] = JSON.stringify(seleniumRemoteHeaders);
 }
 
-export async function setup(options: SetupOptions) {
-    if (options.token && options.tokenFilePath) {
+export async function setup(options?: SetupOptions) {
+    if (options?.token && options.tokenFilePath) {
         console.warn(`playwright-selenium-oauth: both "token" and "tokenFilePath" have been provided, using "token"`);
     }
-    if (options.token) {
+    if (options?.token) {
         setToken(options.token);
         return;
     }
-    if (options.tokenFilePath) {
+    if (options?.tokenFilePath) {
         const path = options.tokenFilePath;
         const token = await readToken(path, options.help);
         setToken(token);
         return;
     }
-    throw new Error(`playwright-selenium-oauth: one of "token" or "tokenFilePath" must be provided`);
+    const tokenFromEnv = process.env[tokenEnvVarialbe];
+    if (!tokenFromEnv) {
+        throw new Error(
+            `playwright-selenium-oauth: "token" or "tokenFilePath" or ${tokenEnvVarialbe} env var must be provided`,
+        );
+    }
+    setToken(tokenFromEnv);
 }

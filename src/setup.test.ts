@@ -5,6 +5,7 @@ global.console = <Console>(<unknown>{ warn: jest.fn(), error: jest.fn(), log: je
 
 describe("setup", () => {
     beforeEach(() => {
+        delete process.env.PLAYWRIGHT_SELENIUM_OAUTH_TOKEN;
         delete process.env.SELENIUM_REMOTE_HEADERS;
         (<jest.Mock>(<unknown>global.console.warn)).mockClear();
         (<jest.Mock>(<unknown>global.console.error)).mockClear();
@@ -20,9 +21,15 @@ describe("setup", () => {
         expect(process.env.SELENIUM_REMOTE_HEADERS).toBe(`{"Authorization":"OAuth mytesttoken123"}`);
     });
 
+    it("should load token from environment", async () => {
+        process.env.PLAYWRIGHT_SELENIUM_OAUTH_TOKEN = "myenvtoken";
+        await setup();
+        expect(process.env.SELENIUM_REMOTE_HEADERS).toBe(`{"Authorization":"OAuth myenvtoken"}`);
+    });
+
     it("should force to provide either token or tokenFilePath", async () => {
         await expect(setup({})).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"playwright-selenium-oauth: one of "token" or "tokenFilePath" must be provided"`,
+            `"playwright-selenium-oauth: "token" or "tokenFilePath" or PLAYWRIGHT_SELENIUM_OAUTH_TOKEN env var must be provided"`,
         );
     });
 
