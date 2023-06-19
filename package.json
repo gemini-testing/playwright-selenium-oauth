@@ -1,5 +1,5 @@
 {
-    "name": "playwright-oauth",
+    "name": "playwright-selenium-oauth",
     "version": "1.0.2",
     "description": "Plugin for convenient setting of authorization OAuth token header for PlayWright - works with Selenium",
     "main": "build/index.js",
