@@ -1,11 +1,9 @@
-import { homedir } from "os";
 import { readToken } from "./read-token";
-import { join } from "path";
 
 export interface SetupOptions {
     tokenFilePath?: string;
     token?: string;
-    help: string;
+    help?: string;
 }
 
 const headersEnvVariable = "SELENIUM_REMOTE_HEADERS";
@@ -44,7 +42,5 @@ export async function setup(options: SetupOptions) {
         setToken(token);
         return;
     }
-    const tokenFilePath = join(homedir(), ".playwright/oauth_token");
-    const token = await readToken(tokenFilePath);
-    setToken(token);
+    throw new Error(`playwright-oauth: one of "token" or "tokenFilePath" must be provided`);
 }
