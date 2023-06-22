@@ -7,8 +7,8 @@ async function readFromFile(path: string, help?: string) {
         console.error(e);
         throw new Error(
             `playwright-selenium-oauth: error reading token from file, path: ${path}. ${
-                help ? `${help}.` : ""
-            }. Caused by: ${e}. `,
+                help ? `help: ${help}.` : ""
+            } Caused by: ${e}. `,
         );
     }
 }

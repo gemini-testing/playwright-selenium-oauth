@@ -7,8 +7,8 @@ A library for OAuth Selenium authentication in PlayWright
 ```
 import {setup} from "playwright-selenium-oauth"
 async function globalSetup() {
-  await setup(); // if you specify SELENIUM_OAUTH_TOKEN environment variable or
-  await setup({token: <my-actual-token>}); // specifying token directly or 
+  await setup(); // if you specify SELENIUM_OAUTH_TOKEN or SELENIUM_OAUTH_TOKEN_FILE_PATH environment variable
+  await setup({token: <my-actual-token>}); // specifying token directly
   await setup({tokenFilePath: /path/to/my/token}); specyfing path to a text file with the token
 }
 export default globalSetup;

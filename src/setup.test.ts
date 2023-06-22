@@ -24,7 +24,7 @@ describe("setup", () => {
         await expect(
             setup({ tokenFilePath: "/i/do/not/exist", help: "i don't need your help" }),
         ).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"playwright-selenium-oauth: error reading token from file, path: /i/do/not/exist. i don't need your help.. Caused by: Error: ENOENT: no such file or directory, open '/i/do/not/exist'. "`,
+            `"playwright-selenium-oauth: error reading token from file, path: /i/do/not/exist. help: i don't need your help. Caused by: Error: ENOENT: no such file or directory, open '/i/do/not/exist'. "`,
         );
     });
 
