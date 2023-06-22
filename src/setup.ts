@@ -7,7 +7,8 @@ export interface SetupOptions {
 }
 
 const headersEnvVariable = "SELENIUM_REMOTE_HEADERS";
-const tokenEnvVarialbe = "PLAYWRIGHT_SELENIUM_OAUTH_TOKEN";
+const tokenEnvVarialbe = "SELENIUM_OAUTH_TOKEN";
+const tokenPathEnvVariable = "SELENIUM_OAUTH_TOKEN_FILE_PATH";
 
 function parseHeadersEnvVariable() {
     try {
@@ -21,12 +22,12 @@ function parseHeadersEnvVariable() {
 function setToken(token: string) {
     const trimmedToken = token.trim();
     if (!trimmedToken) {
-        throw new Error(`playwright-selenium-oauth: token is empty or only contains spaces`);
+        throw new Error(`playwright-selenium-oauth: token is empty`);
     }
     const seleniumRemoteHeaders = parseHeadersEnvVariable();
     const existingAuthHeader = Object.keys(seleniumRemoteHeaders).find(key => key.toLowerCase() === "authorization");
     if (existingAuthHeader) {
-        console.warn(`playwright-selenium-oauth: there is already an Authorization header, not doing anything.`);
+        console.warn(`playwright-selenium-oauth: there is already an Authorization header, do nothing.`);
         return;
     }
     seleniumRemoteHeaders["Authorization"] = `OAuth ${trimmedToken}`;
@@ -35,23 +36,31 @@ function setToken(token: string) {
 
 export async function setup(options?: SetupOptions) {
     if (options?.token && options.tokenFilePath) {
-        console.warn(`playwright-selenium-oauth: both "token" and "tokenFilePath" have been provided, using "token"`);
+        throw new Error(
+            `playwright-selenium-oauth: both "token" and "tokenFilePath" have been provided, please provide only one of them`,
+        );
     }
     if (options?.token) {
         setToken(options.token);
         return;
     }
     if (options?.tokenFilePath) {
-        const path = options.tokenFilePath;
-        const token = await readToken(path, options.help);
+        const token = await readToken(options.tokenFilePath, options.help);
         setToken(token);
         return;
     }
     const tokenFromEnv = process.env[tokenEnvVarialbe];
-    if (!tokenFromEnv) {
-        throw new Error(
-            `playwright-selenium-oauth: "token" or "tokenFilePath" or ${tokenEnvVarialbe} env var must be provided`,
-        );
+    if (tokenFromEnv) {
+        setToken(tokenFromEnv);
+        return;
     }
-    setToken(tokenFromEnv);
+    const filePathFromEnv = process.env[tokenPathEnvVariable];
+    if (filePathFromEnv) {
+        const token = await readToken(filePathFromEnv, options?.help);
+        setToken(token);
+        return;
+    }
+    throw new Error(
+        `playwright-selenium-oauth: one of: "token" or "tokenFilePath" arguments or ${tokenEnvVarialbe} or ${tokenPathEnvVariable} env var must be provided`,
+    );
 }
