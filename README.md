@@ -10,7 +10,7 @@ async function globalSetup() {
   await setup({token: <my-actual-token>}); // specifying token directly
   await setup({tokenFilePath: "/path/to/my/token"}); // specyfing path to a text file with the token
   await setup({tokenFilePath: process.env.CI ? "/robot/token" : "/user/token"}); // example for a CI setup
-  await setup({token: process.env.CI ? process.env.SELENIUM_OAUTH_CI_TOKEN : process.env.SELENIUM_OAUTH_USER_TOKEN}); // example for a CI setup
+  await setup({token: process.env.SELENIUM_OAUTH_CI_TOKEN || process.env.SELENIUM_OAUTH_USER_TOKEN}); // example for a CI setup
 }
 export default globalSetup;
 ```
