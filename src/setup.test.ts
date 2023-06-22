@@ -5,8 +5,6 @@ global.console = <Console>(<unknown>{ warn: jest.fn(), error: jest.fn(), log: je
 
 describe("setup", () => {
     beforeEach(() => {
-        delete process.env.SELENIUM_OAUTH_TOKEN;
-        delete process.env.SELENIUM_OAUTH_TOKEN_FILE_PATH;
         delete process.env.SELENIUM_REMOTE_HEADERS;
     });
 
@@ -24,25 +22,13 @@ describe("setup", () => {
         await expect(
             setup({ tokenFilePath: "/i/do/not/exist", help: "i don't need your help" }),
         ).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"playwright-selenium-oauth: error reading token from file, path: /i/do/not/exist. help: i don't need your help. Caused by: Error: ENOENT: no such file or directory, open '/i/do/not/exist'. "`,
+            `"[playwright-selenium-oauth] error reading token from file, path: /i/do/not/exist. help: i don't need your help. Caused by: Error: ENOENT: no such file or directory, open '/i/do/not/exist'. "`,
         );
-    });
-
-    it("should load token from environment", async () => {
-        process.env.SELENIUM_OAUTH_TOKEN = "myenvtoken";
-        await setup();
-        expect(process.env.SELENIUM_REMOTE_HEADERS).toBe(`{"Authorization":"OAuth myenvtoken"}`);
-    });
-
-    it("should load token from file path environment variable", async () => {
-        process.env.SELENIUM_OAUTH_TOKEN_FILE_PATH = join(__dirname, "./test-fixtures/testtoken");
-        await setup();
-        expect(process.env.SELENIUM_REMOTE_HEADERS).toBe(`{"Authorization":"OAuth mytesttoken123"}`);
     });
 
     it("should throw if no token settings have been provided", async () => {
         await expect(setup({})).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"playwright-selenium-oauth: one of: "token" or "tokenFilePath" arguments or SELENIUM_OAUTH_TOKEN or SELENIUM_OAUTH_TOKEN_FILE_PATH env var must be provided"`,
+            `"[playwright-selenium-oauth] one of: "token" or "tokenFilePath" arguments must be provided"`,
         );
     });
 
@@ -50,7 +36,7 @@ describe("setup", () => {
         await expect(
             setup({ token: "mytoken", tokenFilePath: join(__dirname, "./test-fixtures/testtoken") }),
         ).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"playwright-selenium-oauth: both "token" and "tokenFilePath" have been provided, please provide only one of them"`,
+            `"[playwright-selenium-oauth] both "token" and "tokenFilePath" have been provided, please provide only one of them"`,
         );
     });
 
@@ -69,19 +55,19 @@ describe("setup", () => {
     it("should throw if existing SELENIUM_REMOTE_HEADERS is unparsable", async () => {
         process.env.SELENIUM_REMOTE_HEADERS = "cant parse me";
         await expect(setup({ token: "mytoken" })).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"playwright-selenium-oauth: error parsing SELENIUM_REMOTE_HEADERS. SyntaxError: Unexpected token c in JSON at position 0"`,
+            `"[playwright-selenium-oauth] error parsing SELENIUM_REMOTE_HEADERS. Caused by SyntaxError: Unexpected token c in JSON at position 0"`,
         );
     });
 
     it("should throw if token is empty", async () => {
         await expect(setup({ token: "     " })).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"playwright-selenium-oauth: token is empty"`,
+            `"[playwright-selenium-oauth] token is empty"`,
         );
     });
 
     it("should throw if token is empty - from file", async () => {
         await expect(
             setup({ tokenFilePath: join(__dirname, "./test-fixtures/testtoken-empty") }),
-        ).rejects.toThrowErrorMatchingInlineSnapshot(`"playwright-selenium-oauth: token is empty"`);
+        ).rejects.toThrowErrorMatchingInlineSnapshot(`"[playwright-selenium-oauth] token is empty"`);
     });
 });
