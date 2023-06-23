@@ -1,8 +1,6 @@
 import { join } from "path";
 import { setup } from "./setup";
 
-global.console = <Console>(<unknown>{ warn: jest.fn(), error: jest.fn(), log: jest.fn() });
-
 describe("setup", () => {
     beforeEach(() => {
         delete process.env.SELENIUM_REMOTE_HEADERS;
