@@ -1,7 +1,3 @@
 {
-    "extends": "./tsconfig.common.json",
-    "compilerOptions": {
-        "outDir": "build-spec",
-        "types": ["node", "jest"]
-    }
+    "extends": "./tsconfig.common.json"
 }

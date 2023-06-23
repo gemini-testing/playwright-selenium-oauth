@@ -1,9 +1,9 @@
 module.exports = {
-    root: true,
+    extends: ["gemini-testing", "plugin:@typescript-eslint/recommended", "prettier"],
     parser: "@typescript-eslint/parser",
-    extends: [
-        "plugin:@typescript-eslint/recommended",
-    ],
-    rules: {
+    plugins: ["@typescript-eslint"],
+    root: true,
+    parserOptions: {
+        ecmaVersion: 2022,
     },
 };
