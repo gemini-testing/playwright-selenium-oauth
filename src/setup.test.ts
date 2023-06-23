@@ -19,16 +19,17 @@ describe("setup", () => {
     });
 
     it("should throw and display help when file does not exist", async () => {
-        await expect(
-            setup({ tokenFilePath: "/i/do/not/exist", help: "i don't need your help" }),
-        ).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"[playwright-selenium-oauth] error reading token from file, path: /i/do/not/exist. help: i don't need your help. Caused by: Error: ENOENT: no such file or directory, open '/i/do/not/exist'. "`,
-        );
+        await expect(setup({ tokenFilePath: "/i/do/not/exist", help: "i don't need your help" })).rejects
+            .toThrowErrorMatchingInlineSnapshot(`
+            "[playwright-selenium-oauth]: Error reading token from file, path: /i/do/not/exist. 
+            Help: i don't need your help
+            Caused by: Error: ENOENT: no such file or directory, open '/i/do/not/exist'. "
+        `);
     });
 
     it("should throw if no token settings have been provided", async () => {
         await expect(setup({})).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"[playwright-selenium-oauth] one of: "token" or "tokenFilePath" arguments must be provided"`,
+            `"[playwright-selenium-oauth]: one of: "token" or "tokenFilePath" arguments must be provided"`,
         );
     });
 
@@ -36,7 +37,7 @@ describe("setup", () => {
         await expect(
             setup({ token: "mytoken", tokenFilePath: join(__dirname, "./test-fixtures/testtoken") }),
         ).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"[playwright-selenium-oauth] both "token" and "tokenFilePath" have been provided, please provide only one of them"`,
+            `"[playwright-selenium-oauth]: both "token" and "tokenFilePath" have been provided, please provide only one of them"`,
         );
     });
 
@@ -55,19 +56,21 @@ describe("setup", () => {
     it("should throw if existing SELENIUM_REMOTE_HEADERS is unparsable", async () => {
         process.env.SELENIUM_REMOTE_HEADERS = "cant parse me";
         await expect(setup({ token: "mytoken" })).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"[playwright-selenium-oauth] error parsing SELENIUM_REMOTE_HEADERS. Caused by SyntaxError: Unexpected token c in JSON at position 0"`,
+            `"[playwright-selenium-oauth]: error parsing SELENIUM_REMOTE_HEADERS. Caused by SyntaxError: Unexpected token c in JSON at position 0"`,
         );
     });
 
     it("should throw if token is empty", async () => {
         await expect(setup({ token: "     " })).rejects.toThrowErrorMatchingInlineSnapshot(
-            `"[playwright-selenium-oauth] token is empty"`,
+            `"[playwright-selenium-oauth]: Token is empty. Please set non-empty token via "token" or "tokenFilePath" arguments."`,
         );
     });
 
     it("should throw if token is empty - from file", async () => {
         await expect(
             setup({ tokenFilePath: join(__dirname, "./test-fixtures/testtoken-empty") }),
-        ).rejects.toThrowErrorMatchingInlineSnapshot(`"[playwright-selenium-oauth] token is empty"`);
+        ).rejects.toThrowErrorMatchingInlineSnapshot(
+            `"[playwright-selenium-oauth]: Token is empty. Please set non-empty token via "token" or "tokenFilePath" arguments."`,
+        );
     });
 });

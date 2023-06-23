@@ -1,6 +1,7 @@
 import { readTokenFromFile } from "./read-token-from-file";
 import { logger } from "./logger";
 import { PlaywrightSeleniumError } from "./playwright-selenium-error";
+import { constants } from "./constants";
 
 export interface SetupOptions {
     tokenFilePath?: string;
@@ -8,20 +9,20 @@ export interface SetupOptions {
     help?: string;
 }
 
-const headersEnvVariable = "SELENIUM_REMOTE_HEADERS";
-
 function parseHeadersEnvVariable() {
     try {
-        return JSON.parse(process.env[headersEnvVariable] ?? "{}");
+        return JSON.parse(process.env[constants.SELENIUM_REMOTE_HEADERS] ?? "{}");
     } catch (e) {
-        throw new PlaywrightSeleniumError(`error parsing ${headersEnvVariable}. Caused by ${e}`);
+        throw new PlaywrightSeleniumError(`error parsing ${constants.SELENIUM_REMOTE_HEADERS}. Caused by ${e}`);
     }
 }
 
 function setToken(token: string) {
     const trimmedToken = token.trim();
     if (!trimmedToken) {
-        throw new PlaywrightSeleniumError(`token is empty`);
+        throw new PlaywrightSeleniumError(
+            `Token is empty. Please set non-empty token via "token" or "tokenFilePath" arguments.`,
+        );
     }
     const seleniumRemoteHeaders = parseHeadersEnvVariable();
     const existingAuthHeader = Object.keys(seleniumRemoteHeaders).find(key => key.toLowerCase() === "authorization");
@@ -30,7 +31,7 @@ function setToken(token: string) {
         return;
     }
     seleniumRemoteHeaders["Authorization"] = `OAuth ${trimmedToken}`;
-    process.env[headersEnvVariable] = JSON.stringify(seleniumRemoteHeaders);
+    process.env[constants.SELENIUM_REMOTE_HEADERS] = JSON.stringify(seleniumRemoteHeaders);
 }
 
 export async function setup(options?: SetupOptions) {

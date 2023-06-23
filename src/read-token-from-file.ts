@@ -6,7 +6,9 @@ export async function readTokenFromFile(path: string, help?: string) {
         return await readFile(path, { encoding: "utf-8" });
     } catch (e) {
         throw new PlaywrightSeleniumError(
-            `error reading token from file, path: ${path}. ${help ? `help: ${help}.` : ""} Caused by: ${e}. `,
+            `Error reading token from file, path: ${path}. 
+${help ? `Help: ${help}` : ""}
+Caused by: ${e}. `,
         );
     }
 }
