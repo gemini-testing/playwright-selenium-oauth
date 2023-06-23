@@ -34,18 +34,18 @@ function setToken(token: string) {
     process.env[constants.SELENIUM_REMOTE_HEADERS] = JSON.stringify(seleniumRemoteHeaders);
 }
 
-export async function setup(options?: SetupOptions) {
-    if (options?.token && options.tokenFilePath) {
+export async function setup(options: SetupOptions) {
+    if (options.token && options.tokenFilePath) {
         throw new PlaywrightSeleniumError(
             `both "token" and "tokenFilePath" have been provided, please provide only one of them`,
         );
     }
-    if (options?.token) {
+    if (options.token) {
         logger("Reading from token argument.");
         setToken(options.token);
         return;
     }
-    if (options?.tokenFilePath) {
+    if (options.tokenFilePath) {
         logger(`Reading from token file path argument at ${options.tokenFilePath}`);
         const token = await readTokenFromFile(options.tokenFilePath, options.help);
         setToken(token);
