@@ -1,6 +1,6 @@
 {
     "name": "playwright-selenium-oauth",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Playwright helper for Selenium OAuth authentication",
     "main": "build/index.js",
     "files": [
