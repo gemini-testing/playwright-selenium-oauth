@@ -26,14 +26,16 @@ describe("setup", () => {
     });
 
     it("should throw if no token settings have been provided", async () => {
-        await expect(setup({})).rejects.toThrowErrorMatchingInlineSnapshot(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await expect(setup(<any>{})).rejects.toThrowErrorMatchingInlineSnapshot(
             `"[playwright-selenium-oauth]: one of: "token" or "tokenFilePath" arguments must be provided"`,
         );
     });
 
     it("should throw if both token and tokenFilePath specified", async () => {
         await expect(
-            setup({ token: "mytoken", tokenFilePath: join(__dirname, "./test-fixtures/testtoken") }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            setup(<any>{ token: "mytoken", tokenFilePath: join(__dirname, "./test-fixtures/testtoken") }),
         ).rejects.toThrowErrorMatchingInlineSnapshot(
             `"[playwright-selenium-oauth]: both "token" and "tokenFilePath" have been provided, please provide only one of them"`,
         );
