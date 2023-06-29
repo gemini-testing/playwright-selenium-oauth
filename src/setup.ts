@@ -4,7 +4,7 @@ import { PlaywrightSeleniumError } from "./playwright-selenium-error";
 import { constants } from "./constants";
 import { RequireExactlyOne } from "type-fest";
 
-type SetupOptions = RequireExactlyOne<
+export type SetupOptions = RequireExactlyOne<
     {
         tokenFilePath?: string;
         token?: string;
