@@ -2,12 +2,16 @@ import { readTokenFromFile } from "./read-token-from-file";
 import { logger } from "./logger";
 import { PlaywrightSeleniumError } from "./playwright-selenium-error";
 import { constants } from "./constants";
+import { RequireExactlyOne } from "type-fest";
 
-export interface SetupOptions {
-    tokenFilePath?: string;
-    token?: string;
-    help?: string;
-}
+export type SetupOptions = RequireExactlyOne<
+    {
+        tokenFilePath?: string;
+        token?: string;
+        help?: string;
+    },
+    "tokenFilePath" | "token"
+>;
 
 function parseHeadersEnvVariable() {
     try {

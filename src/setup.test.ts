@@ -1,5 +1,5 @@
 import { join } from "path";
-import { setup } from "./setup";
+import { SetupOptions, setup } from "./setup";
 
 describe("setup", () => {
     beforeEach(() => {
@@ -26,14 +26,16 @@ describe("setup", () => {
     });
 
     it("should throw if no token settings have been provided", async () => {
-        await expect(setup({})).rejects.toThrowErrorMatchingInlineSnapshot(
+        await expect(setup(<SetupOptions>(<unknown>{}))).rejects.toThrowErrorMatchingInlineSnapshot(
             `"[playwright-selenium-oauth]: one of: "token" or "tokenFilePath" arguments must be provided"`,
         );
     });
 
     it("should throw if both token and tokenFilePath specified", async () => {
         await expect(
-            setup({ token: "mytoken", tokenFilePath: join(__dirname, "./test-fixtures/testtoken") }),
+            setup(<SetupOptions>(
+                (<unknown>{ token: "mytoken", tokenFilePath: join(__dirname, "./test-fixtures/testtoken") })
+            )),
         ).rejects.toThrowErrorMatchingInlineSnapshot(
             `"[playwright-selenium-oauth]: both "token" and "tokenFilePath" have been provided, please provide only one of them"`,
         );
